@@ -1,0 +1,56 @@
+name: Test and release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-15-intel, macos-15, windows-2025, windows-11-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: go test ./...
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: test
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - name: Build archives
+        shell: bash
+        run: |
+          mkdir -p dist stage
+          for target in darwin_amd64 darwin_arm64 linux_amd64 linux_arm64 windows_amd64 windows_arm64; do
+            os=$(printf '%s' "$target" | cut -d _ -f1)
+            arch=$(printf '%s' "$target" | cut -d _ -f2)
+            name=english-guard
+            if [ "$os" = windows ]; then name=english-guard.exe; fi
+            GOOS="$os" GOARCH="$arch" CGO_ENABLED=0 go build -trimpath \
+              -ldflags="-s -w -X main.version=$GITHUB_REF_NAME" -o "stage/$name" .
+            if [ "$os" = windows ]; then
+              (cd stage && zip -q "../dist/english-guard_$target.zip" "$name")
+            else
+              tar -czf "dist/english-guard_$target.tar.gz" -C stage "$name"
+            fi
+            rm "stage/$name"
+          done
+          (cd dist && sha256sum english-guard_* > checksums.txt)
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --title "$GITHUB_REF_NAME" --generate-notes
