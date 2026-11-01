@@ -41,8 +41,8 @@ Tutor uses a separate temporary Codex grammar session fixed at Low effort. Each 
 
 - [x] Prepare v0.2.0 release notes, installation documentation, and explicit experimental Tutor limitations.
 - [x] Confirm GitHub publishing access and the existing six-platform release workflow.
-- [ ] Publish v0.2.0 on GitHub after native CI passes for all six targets.
-- [ ] Download the published release and verify its checksum, installation, and removal on macOS.
+- [x] Publish [v0.2.0 on GitHub](https://github.com/rebrudiy/codex-english-guard/releases/tag/v0.2.0) after native CI passes for all six targets.
+- [x] Download all six published archives and verify their checksums and contents; verify repeat installation, per-chat activation, and removal using the published macOS ARM binary.
 - [ ] Verify end-user release installation and removal on Windows and Linux beyond native automated tests.
 
 ## OpenAI public directory

@@ -9,7 +9,8 @@ Local validation on 2026-11-01 used macOS and Codex CLI 0.166.0. Tutor is experi
 - Installer tests preserve unrelated hooks, back up existing configuration, and remove this project's hooks, MCP registration, session state, timing data, and dashboard state on uninstall.
 - Worker tests verify explicit Low effort despite an Xhigh user setting, fresh working directories, grammar-only instructions, and disabled hooks, file tools, and web search.
 - Timing tests cover partial events, missing usage, privacy, native-choice wait, authenticated localhost access, background process detachment, and cleanup.
-- Windows and Linux cross-builds pass. The GitHub release workflow also requires native Go tests on macOS, Linux, and Windows, each on amd64 and arm64, before publishing binaries.
+- Native Go tests passed on macOS, Linux, and Windows, each on amd64 and arm64, before [the release workflow](https://github.com/rebrudiy/codex-english-guard/actions/runs/41343267309) published v0.2.0. Local Windows and Linux cross-builds also passed.
+- All six published archives were downloaded, SHA-256 checked against the published manifest, and inspected for their expected executable. The published macOS ARM binary passed isolated install/update/removal, per-chat activation, letters/math, backup, and unrelated-configuration preservation checks, including a Codex home path containing spaces.
 - The local dashboard was rendered in Chrome against actual timing records and token counts. Timing records contain no prompt or correction text.
 
 ## Live Codex behavior
