@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Tutor timing · English Guard</title>
+  <style nonce="__CSP_NONCE__">
+    :root{--paper:#f5f4ee;--surface:#fffefa;--ink:#1d302a;--muted:#6c7771;--line:#e1e5dc;--green:#2a765c;--mint:#e7f1e8;--orange:#bc6e32;--orange-light:#fff0df;--blue:#5d7b95;--red:#a84740;--shadow:0 8px 30px #273a2b05}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button{font:inherit}button:focus-visible{outline:3px solid #a0c4b0;outline-offset:3px}.shell{max-width:1440px;margin:0 auto;padding:30px 38px 20px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:27px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:12px}.mark{width:36px;height:36px;display:grid;place-items:center;border:1px solid #b8c7b8;border-radius:11px;font-size:19px;background:var(--surface);color:var(--green)}.brand-title{font-size:15px;font-weight:650;letter-spacing:-.2px}.brand-subtitle{font-size:12px;color:var(--muted)}.top-right{display:flex;align-items:center;gap:16px}.local-label{color:var(--muted);font-size:12px}.connection{display:flex;gap:7px;align-items:center;font-size:12px;color:var(--green);white-space:nowrap}.dot{width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 0 4px #2a765c0a}.connection.offline{color:var(--orange)}.connection.offline .dot{background:var(--orange)}.intro{display:flex;justify-content:space-between;align-items:end;gap:20px;padding:31px 0 26px}h1{font-size:29px;line-height:1.25;letter-spacing:-1px;font-weight:600;margin:0 0 8px}.subtitle{margin:0;color:var(--muted);font-size:14px}.privacy-tag{color:var(--muted);font-size:12px;white-space:nowrap}.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:26px;align-items:start}.history{border:1px solid var(--line);border-radius:15px;background:#f9faf4;overflow:hidden}.history-heading{display:flex;align-items:center;justify-content:space-between;padding:17px 17px 11px}.eyebrow{font-size:10px;font-weight:650;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}.count{font-size:11px;border:1px solid var(--line);padding:1px 6px;border-radius:5px;color:var(--muted)}.follow{margin:0 13px 12px;width:calc(100% - 26px);padding:8px;border:1px solid #cddccf;background:var(--mint);color:var(--green);border-radius:7px;font-size:12px;cursor:pointer}.follow[aria-pressed=false]{border-color:var(--line);color:var(--muted);background:transparent}.run-list{max-height:730px;overflow:auto;padding:0 8px 9px}.run-item{width:100%;display:block;border:1px solid transparent;background:transparent;text-align:left;padding:13px 11px;border-radius:9px;cursor:pointer;color:var(--ink);margin-bottom:3px}.run-item:hover{background:#edf0e8}.run-item.selected{background:var(--surface);border-color:#c8d4c5;box-shadow:0 2px 5px #1d302a04}.run-item-top,.run-item-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px}.run-time{font-size:13px;font-weight:550}.run-duration{font-size:13px;font-variant-numeric:tabular-nums}.run-item-bottom{margin-top:6px;font-size:11px;color:var(--muted)}.run-id{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:10px;color:#8b948d}.small-status{display:flex;gap:5px;align-items:center}.small-dot{height:5px;width:5px;flex-shrink:0;border-radius:50%;background:#86928a}.small-dot.running,.small-dot.choosing{background:var(--orange)}.small-dot.ready,.small-dot.completed{background:var(--green)}.small-dot.failed{background:var(--red)}.detail{min-width:0}.detail-heading{display:flex;justify-content:space-between;align-items:start;gap:15px;margin:0 0 20px;padding:0 2px}.detail-heading h2{margin:0;font-size:18px;letter-spacing:-.4px;font-weight:600}.run-meta{margin:4px 0 0;font-size:12px;color:var(--muted)}.badge{padding:4px 9px;border:1px solid #d0dfd1;background:var(--mint);border-radius:6px;color:var(--green);font-size:11px;white-space:nowrap}.badge.running,.badge.choosing{background:var(--orange-light);border-color:#ecd9bf;color:var(--orange)}.badge.failed,.badge.cancelled{background:#fbebe7;border-color:#eed1ca;color:var(--red)}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:17px}.metric{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 16px 13px;box-shadow:var(--shadow);min-height:118px}.metric-label{font-size:11px;color:var(--muted)}.metric-value{font-size:28px;font-weight:550;letter-spacing:-1px;line-height:1.35;margin:8px 0 4px;font-variant-numeric:tabular-nums}.metric-value.word{font-size:26px;text-transform:capitalize}.metric-value .unit{font-size:14px;font-weight:400;color:var(--muted);letter-spacing:0}.metric-note{font-size:10px;color:var(--muted)}.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow);padding:23px 24px;margin-bottom:17px}.panel-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}h3{font-size:14px;font-weight:600;letter-spacing:-.2px;margin:0}.panel-caption{font-size:11px;color:var(--muted)}.insight{display:flex;gap:12px;padding:13px 15px;margin-bottom:23px;background:#f1f5ed;border:1px solid #e1e9d9;border-radius:9px}.insight-icon{color:var(--green);line-height:22px;font-size:17px}.insight-title{font-size:12px;font-weight:550;margin-bottom:3px}.insight-copy{font-size:11px;color:var(--muted);line-height:1.65}.stage-row{display:grid;grid-template-columns:153px minmax(40px,1fr) 73px;gap:16px;align-items:center;min-height:45px}.stage-label{font-size:12px}.stage-label small{display:block;font-size:10px;color:var(--muted);margin-top:1px}.stage-track{height:13px;border-radius:4px;background:#f1f2ec;position:relative;overflow:hidden}.stage-bar{position:absolute;height:100%;min-width:3px;border-radius:4px;background:#a7b5a6}.stage-bar.preparation{background:#a6b89f}.stage-bar.startup{background:#c6bc98}.stage-bar.gpt{background:var(--green)}.stage-bar.result{background:#94a8b6}.stage-bar.active{background-image:linear-gradient(100deg,transparent 30%,#ffffff35 50%,transparent 70%);background-size:200% 100%;animation:shine 2s linear infinite}.stage-time{font-size:12px;text-align:right;font-variant-numeric:tabular-nums}.stage-time.missing{font-size:10px;color:var(--muted)}.axis{display:grid;grid-template-columns:153px minmax(40px,1fr) 73px;gap:16px;padding:10px 0 0}.axis-track{display:flex;justify-content:space-between;font-size:10px;color:#92998f;border-top:1px solid var(--line);padding-top:6px}.explanation{font-size:11px;color:var(--muted);margin:20px 0 0;line-height:1.75;border-top:1px solid var(--line);padding-top:15px}.explanation code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:10px;background:#f0f2eb;padding:1px 4px;border-radius:3px;color:#677468}.lower{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:17px}.lower .panel{padding:21px;min-width:0}.token-row{display:flex;justify-content:space-between;gap:20px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--line);font-size:12px}.token-row:first-of-type{padding-top:0}.token-row:last-of-type{border:0}.token-row.total{margin-top:5px;font-weight:600}.token-row.subset{padding-top:0;font-size:10px;color:var(--muted)}.token-number{font-variant-numeric:tabular-nums}.token-help{font-size:10px;color:var(--muted);line-height:1.7;margin:13px 0 0}.event-list{max-height:300px;overflow:auto}.event{display:grid;grid-template-columns:9px 1fr auto;gap:9px;align-items:baseline;padding:7px 0;font-size:11px}.event-circle{width:5px;height:5px;border:1px solid #94a68f;border-radius:50%;margin-top:4px}.event-name{overflow-wrap:anywhere}.event-detail{display:block;color:var(--muted);font-size:10px;margin-top:3px}.event-ms{color:var(--muted);font-size:10px;white-space:nowrap;font-variant-numeric:tabular-nums}.event.warning .event-circle{background:var(--orange);border-color:var(--orange)}.event.warning .event-name{color:var(--orange)}.choice{border:1px dashed #d6d9cd;border-radius:9px;padding:12px 14px;margin-top:17px;display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted)}.choice strong{display:block;color:var(--ink);font-weight:500;margin-bottom:3px}.choice-time{font-variant-numeric:tabular-nums;color:var(--ink);white-space:nowrap;font-size:12px}.error{font-size:12px;padding:13px 16px;border:1px solid #e8d2c7;border-radius:9px;background:#fff5ed;color:#985333;margin-bottom:17px;overflow-wrap:anywhere}.empty{display:grid;place-items:center;min-height:450px;border:1px dashed #d5dace;border-radius:15px;background:#fafbf6;padding:35px;text-align:center}.empty-icon{display:grid;place-items:center;margin:0 auto 20px;width:56px;height:56px;border:1px solid #d2deca;background:#eef4e9;border-radius:17px;color:var(--green);font-size:25px}.empty h2{font-size:21px;font-weight:550;letter-spacing:-.5px;margin:0 0 10px}.empty p{color:var(--muted);font-size:13px;max-width:355px;line-height:1.8;margin:0 auto}.empty code{font-size:12px;background:#edf0e7;border:1px solid #e0e6d7;border-radius:4px;padding:2px 5px;color:#4f6956}.history-empty{font-size:12px;color:var(--muted);padding:12px 10px 25px;text-align:center}.footer{display:flex;justify-content:space-between;gap:15px;font-size:10px;color:#8c958b;padding:19px 2px 0}.hidden{display:none!important}@keyframes shine{to{background-position:-200% 0}}@media(prefers-reduced-motion:reduce){.stage-bar.active{animation:none}}@media(min-width:1350px){.layout{grid-template-columns:280px minmax(0,1fr);gap:30px}.metric{padding:17px 20px}.stage-row,.axis{grid-template-columns:175px minmax(40px,1fr) 78px}}@media(max-width:1050px){.shell{padding:24px}.layout{grid-template-columns:220px minmax(0,1fr);gap:20px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric{min-height:110px}.lower{grid-template-columns:1fr}.stage-row,.axis{grid-template-columns:130px minmax(30px,1fr) 65px;gap:10px}.panel{padding:20px}.privacy-tag{display:none}}@media(max-width:720px){.shell{padding:20px 16px}.topbar{padding-bottom:20px}.local-label{display:none}.intro{padding:25px 0 22px}h1{font-size:26px}.subtitle{font-size:12px}.layout{grid-template-columns:1fr;gap:22px}.history-heading{padding-top:12px}.run-list{display:flex;gap:6px;max-height:none;overflow-x:auto;max-width:100%;padding-bottom:10px}.run-item{min-width:180px;width:180px;margin:0}.history-empty{width:100%;padding:5px}.follow{width:auto;position:absolute;right:29px;top:12px;margin:0;padding:3px 7px}.history{position:relative}.history-heading{justify-content:start;gap:9px;padding-bottom:12px}.detail-heading{margin-bottom:15px}.metrics{gap:9px}.metric{padding:13px 15px;min-height:106px}.metric-value{font-size:27px}.panel{padding:18px 16px}.stage-row,.axis{grid-template-columns:111px minmax(30px,1fr) 57px;gap:8px}.stage-label{font-size:11px}.stage-label small{font-size:9px}.stage-time{font-size:11px}.stage-time.missing{font-size:9px}.panel-caption{font-size:10px}.footer{font-size:9px}.empty{min-height:330px}.badge{font-size:10px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><div class="mark" aria-hidden="true">g.</div><div><div class="brand-title">English Guard</div><div class="brand-subtitle">Tutor observability</div></div></div>
+      <div class="top-right"><span class="local-label">127.0.0.1 · private to this computer</span><div class="connection" id="connection" role="status"><span class="dot"></span><span id="connection-text">Connecting</span></div></div>
+    </header>
+    <div class="intro"><div><h1>Where the seconds go.</h1><p class="subtitle">A live look at every Tutor grammar check.</p></div><span class="privacy-tag">Timing &amp; token counts. No prompt text.</span></div>
+    <div id="connection-error" class="error hidden" role="alert"></div>
+    <main class="layout">
+      <aside class="history" aria-label="Run history">
+        <div class="history-heading"><span class="eyebrow">Recent checks</span><span class="count" id="run-count">0</span></div>
+        <button class="follow" id="follow" aria-pressed="true">Following latest</button>
+        <div class="run-list" id="run-list"><div class="history-empty">Waiting for your first check.</div></div>
+      </aside>
+      <section class="detail" aria-label="Selected check">
+        <div class="empty" id="empty"><div><div class="empty-icon" aria-hidden="true">↗</div><h2>Your next check starts here.</h2><p>Send <code>Tutor on</code> in a Codex chat, then send an English prompt. Its timing will appear here automatically.</p></div></div>
+        <div id="run-detail" class="hidden">
+          <div class="detail-heading"><div><h2 id="run-title">Latest grammar check</h2><p class="run-meta" id="run-meta"></p></div><span class="badge" id="run-status"></span></div>
+          <div id="run-error" class="error hidden"></div>
+          <div class="metrics">
+            <div class="metric"><div class="metric-label">Grammar check</div><div class="metric-value" id="total-value">—</div><div class="metric-note" id="total-note">Until result is ready</div></div>
+            <div class="metric"><div class="metric-label">GPT request</div><div class="metric-value" id="gpt-value">—</div><div class="metric-note" id="gpt-note">Request + generation</div></div>
+            <div class="metric"><div class="metric-label">Outside GPT request</div><div class="metric-value" id="local-value">—</div><div class="metric-note">Preparation, startup &amp; result</div></div>
+            <div class="metric"><div class="metric-label">Reasoning effort</div><div class="metric-value word" id="effort-value">Low</div><div class="metric-note">Configured for this request</div></div>
+          </div>
+          <section class="panel" aria-label="Stage timeline">
+            <div class="panel-heading"><h3>Check timeline</h3><span class="panel-caption">Elapsed seconds · same time axis</span></div>
+            <div class="insight"><div class="insight-icon" aria-hidden="true">↗</div><div><div class="insight-title" id="insight-title"></div><div class="insight-copy" id="insight-copy"></div></div></div>
+            <div id="stages"></div>
+            <div class="axis"><span></span><div class="axis-track"><span>0 s</span><span id="axis-end"></span></div><span></span></div>
+            <p class="explanation">The GPT stage runs from <code>turn.started</code> to <code>turn.completed</code>. It combines the request, network, queueing, and generation. These events cannot measure those parts separately. Codex startup can also include network work, such as refreshing the model catalog.</p>
+            <div class="choice hidden" id="choice"><div><strong>User choice</strong><span id="choice-note"></span></div><span class="choice-time" id="choice-time"></span></div>
+          </section>
+          <div class="lower">
+            <section class="panel"><div class="panel-heading"><h3>Event trail</h3><span class="panel-caption">Time since check started</span></div><div class="event-list" id="events"></div></section>
+            <section class="panel"><div class="panel-heading"><h3>Token usage</h3><span class="panel-caption" id="usage-state"></span></div><div id="usage"></div><p class="token-help">Cached input is included in input tokens. Reasoning output is included in output tokens. Neither subset is added a second time.</p></section>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="footer"><span>Local telemetry · latest 100 checks · refreshes every second</span><span id="version">English Guard</span></footer>
+  </div>
+  <script nonce="__CSP_NONCE__">
+  (() => {
+    'use strict';
+    const $ = id => document.getElementById(id);
+    const make = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+    let runs = [], selected = null, following = true, busy = false, clockOffset = 0;
+    const labels = {running:'Checking',ready:'Result ready',choosing:'Waiting for your choice',completed:'Completed',failed:'Failed',cancelled:'Cancelled'};
+    const terminal = run => ['failed','cancelled','completed','ready','choosing'].includes(run.status);
+    const eventsFor = run => (run.events || []).filter(e => Number.isFinite(e.at_ms) && e.at_ms >= 0).slice().sort((a,b) => a.at_ms - b.at_ms);
+    const event = (run, name) => eventsFor(run).find(e => e.name === name);
+    const at = (run, name) => { const e = event(run, name); return e ? e.at_ms : null; };
+    const sinceStart = (run, date) => Math.max(0, new Date(date).getTime() - new Date(run.started_at).getTime());
+    const nowElapsed = run => Math.max(0, Date.now() + clockOffset - new Date(run.started_at).getTime());
+    const checkElapsed = run => { const ready = at(run, 'result_ready'); if (ready !== null) return ready; if (terminal(run)) return sinceStart(run, run.updated_at); return nowElapsed(run); };
+    const seconds = ms => { if (!Number.isFinite(ms)) return '—'; return (ms / 1000).toFixed(ms < 1000 ? 3 : ms < 10000 ? 2 : 1) + ' s'; };
+    const number = value => Number.isFinite(value) ? value.toLocaleString() : '—';
+    const shortDate = date => new Date(date).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const fullDate = date => new Date(date).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    function metric(id, ms) { const target = $(id); target.replaceChildren(); if (!Number.isFinite(ms)) { target.textContent = '—'; return; } const parts = seconds(ms).split(' '); target.append(document.createTextNode(parts[0] + ' '), make('span','unit','s')); }
+    function choose(id) { selected = id; following = false; render(); }
+    $('follow').addEventListener('click', () => { following = !following; if (following && runs.length) selected = runs[0].id; render(); });
+    function stageData(run) {
+      const checkpoints = ['prepare_started','process_launch','process_started','turn.started','turn.completed','result_ready'];
+      const definitions = [
+        ['Local preparation','Files & request setup','preparation'],
+        ['Process launch','Starting Codex','preparation'],
+        ['Codex startup','Process → turn started','startup'],
+        ['GPT request / generation','Request + generation','gpt'],
+        ['Result handling','Turn completed → ready','result']
+      ];
+      return definitions.map((definition, index) => {
+        const start = at(run, checkpoints[index]), end = at(run, checkpoints[index + 1]);
+        const later = checkpoints.slice(index + 2).some(name => at(run, name) !== null);
+        const active = start !== null && end === null && !later && run.status === 'running';
+        return {label:definition[0],note:definition[1],kind:definition[2],start,end,active,
+          ms:start !== null && end !== null ? Math.max(0,end-start) : active ? Math.max(0,nowElapsed(run)-start) : null};
+      });
+    }
+    function renderHistory() {
+      $('run-count').textContent = runs.length;
+      $('follow').setAttribute('aria-pressed',String(following));
+      $('follow').textContent = following ? 'Following latest' : 'Follow latest';
+      const list = $('run-list'), focusedRun = document.activeElement && document.activeElement.dataset.runId;
+      list.replaceChildren();
+      if (!runs.length) { list.append(make('div','history-empty','Waiting for your first check.')); return; }
+      for (const run of runs) {
+        const button = make('button','run-item' + (selected === run.id ? ' selected' : ''));
+        button.dataset.runId = run.id;
+        button.setAttribute('aria-pressed',String(selected === run.id));
+        const top = make('div','run-item-top'); top.append(make('span','run-time',shortDate(run.started_at)),make('span','run-duration',seconds(checkElapsed(run))));
+        const bottom = make('div','run-item-bottom'), status = make('span','small-status');
+        status.append(make('span','small-dot ' + (labels[run.status] ? run.status : ''),''),document.createTextNode(labels[run.status] || 'Unknown status'));
+        bottom.append(status,make('span','run-id',run.id.slice(-7))); button.append(top,bottom);
+        button.addEventListener('click',() => choose(run.id)); list.append(button);
+        if (focusedRun === run.id) button.focus({preventScroll:true});
+      }
+    }
+    function renderStages(run, total) {
+      const stages = stageData(run), target = $('stages'); target.replaceChildren();
+      const measured = stages.filter(s => s.ms !== null), longest = measured.slice().sort((a,b) => b.ms-a.ms)[0];
+      const scale = Math.max(100,total,...measured.map(s => s.start + s.ms));
+      for (const stage of stages) {
+        const row = make('div','stage-row'), label = make('div','stage-label',stage.label);
+        label.append(make('small','',stage.note));
+        const track = make('div','stage-track');
+        if (stage.ms !== null) {
+          const bar = make('div','stage-bar ' + stage.kind + (stage.active ? ' active' : ''));
+          bar.style.left = (100 * stage.start / scale) + '%'; bar.style.width = (100 * stage.ms / scale) + '%'; track.append(bar);
+        }
+        let value = stage.ms === null ? 'Not reported' : seconds(stage.ms);
+        if (stage.ms === null && stage.start !== null) value = 'End missing';
+        const timing = make('div','stage-time' + (stage.ms === null ? ' missing' : ''),value);
+        if (stage.active) timing.title = 'In progress';
+        row.append(label,track,timing); target.append(row);
+      }
+      $('axis-end').textContent = seconds(scale);
+      const ready = at(run,'result_ready') !== null;
+      if (!longest) {
+        $('insight-title').textContent = 'Waiting for stage events.';
+        $('insight-copy').textContent = 'Durations appear as Codex reports each stage. Missing events are shown explicitly.';
+      } else {
+        $('insight-title').textContent = longest.kind === 'gpt' ? 'Most time is in the GPT request.' : longest.label + ' is the longest observed stage.';
+        const share = total > 0 ? Math.min(100,Math.round(100 * longest.ms / total)) : 0;
+        $('insight-copy').textContent = seconds(longest.ms) + ' · ' + share + '% of ' + (ready ? 'the grammar check.' : 'elapsed check time so far.') + (longest.kind === 'gpt' ? ' Low reasoning effort is a setting, not a latency guarantee.' : '') + (stages.some(s => s.ms === null) && terminal(run) ? ' Some stage events were not reported.' : '');
+      }
+    }
+    function renderUsage(run) {
+      const target = $('usage'); target.replaceChildren();
+      $('usage-state').textContent = run.usage ? 'Reported by Codex' : 'Not reported';
+      if (!run.usage) { target.append(make('p','token-help','Token usage appears when Codex reports a completed turn. A missing count does not mean zero tokens.')); return; }
+      const usage = run.usage;
+      const row = (label, value, cls) => { const e = make('div','token-row' + (cls ? ' ' + cls : '')); e.append(make('span','',label),make('span','token-number',Number.isFinite(value) ? number(value) : 'Not reported')); target.append(e); };
+      row('Input',usage.input_tokens);
+      row('↳ Cached subset',usage.cached_input_tokens,'subset');
+      row('Output',usage.output_tokens);
+      row('↳ Reasoning subset',usage.reasoning_output_tokens,'subset');
+      row('Input + output',Number.isFinite(usage.input_tokens) && Number.isFinite(usage.output_tokens) ? usage.input_tokens + usage.output_tokens : null,'total');
+    }
+    function renderEvents(run) {
+      const target = $('events'); target.replaceChildren();
+      const events = eventsFor(run);
+      if (!events.length) target.append(make('p','token-help','No events have been reported yet.'));
+      for (const ev of events) {
+        const warning = ['catalog_warning','connection_retry'].includes(ev.name);
+        const row = make('div','event' + (warning ? ' warning' : ''));
+        const name = make('div','event-name',ev.name);
+        if (ev.detail) name.append(make('span','event-detail',ev.detail));
+        row.append(make('span','event-circle'),name,make('span','event-ms',seconds(ev.at_ms))); target.append(row);
+      }
+    }
+    function renderChoice(run) {
+      const start = at(run,'choice.started'), end = at(run,'choice.completed');
+      const visible = start !== null;
+      $('choice').classList.toggle('hidden',!visible);
+      if (!visible) return;
+      $('choice-note').textContent = end === null ? 'Waiting for Use or Keep in your chat. This wait is outside the grammar check.' : run.status === 'cancelled' ? 'Choice cancelled. The prompt was not sent.' : 'Choice applied after the grammar check. User wait is excluded above.';
+      $('choice-time').textContent = end === null && run.status !== 'choosing' ? 'End missing' : seconds(end !== null ? Math.max(0,end-start) : Math.max(0,nowElapsed(run)-start));
+    }
+    function render() {
+      if (following && runs.length) selected = runs[0].id;
+      if (runs.length && !runs.some(r => r.id === selected)) selected = runs[0].id;
+      renderHistory();
+      const run = runs.find(r => r.id === selected);
+      $('empty').classList.toggle('hidden',!!run); $('run-detail').classList.toggle('hidden',!run);
+      if (!run) return;
+      $('run-title').textContent = selected === runs[0].id ? 'Latest grammar check' : 'Grammar check';
+      const ready = at(run,'result_ready'), start = at(run,'turn.started'), end = at(run,'turn.completed');
+      const total = checkElapsed(run), gpt = start === null ? null : end !== null ? Math.max(0,end-start) : run.status === 'running' ? Math.max(0,nowElapsed(run)-start) : null;
+      $('run-meta').textContent = fullDate(run.started_at) + ' · ' + number(run.prompt_bytes) + ' prompt bytes · ' + (ready === null ? 'Result pending' : run.changed ? 'Correction suggested' : 'Already correct');
+      $('run-status').textContent = labels[run.status] || 'Unknown status'; $('run-status').className = 'badge ' + (labels[run.status] ? run.status : '');
+      $('run-error').classList.toggle('hidden',!run.error); $('run-error').textContent = run.error || '';
+      metric('total-value',total); metric('gpt-value',gpt);
+      const stages = stageData(run), local = ready !== null && stages.every(s => s.ms !== null) ? stages.filter(s => s.kind !== 'gpt').reduce((sum,s) => sum+s.ms,0) : null;
+      metric('local-value',local);
+      $('total-note').textContent = ready !== null ? 'Until result was ready' : run.status === 'running' ? 'In progress' : 'Stopped before result was ready';
+      $('gpt-note').textContent = start === null ? 'Turn start not reported' : end === null ? run.status === 'running' ? 'Request in progress' : 'Turn end not reported' : 'Request + generation';
+      $('effort-value').textContent = run.effort || '—';
+      renderStages(run,total); renderUsage(run); renderEvents(run); renderChoice(run);
+    }
+    async function poll() {
+      if (busy) return;
+      busy = true;
+      try {
+        const response = await fetch('/api/runs',{cache:'no-store',credentials:'same-origin'});
+        if (!response.ok) throw new Error(response.status === 401 ? "This dashboard session expired. Run 'english-guard dashboard' to reopen it." : 'Timing history is unavailable. Reopen the dashboard if this continues.');
+        const data = await response.json();
+        clockOffset = new Date(data.server_time).getTime() - Date.now();
+        runs = (Array.isArray(data.runs) ? data.runs : []).sort((a,b) => new Date(b.started_at)-new Date(a.started_at));
+        $('connection').classList.remove('offline'); $('connection-text').textContent = 'Live · every 1 s';
+        $('connection-error').classList.add('hidden'); $('version').textContent = 'English Guard · ' + (data.version || 'dev');
+        render();
+      } catch (err) {
+        $('connection').classList.add('offline'); $('connection-text').textContent = 'Disconnected';
+        $('connection-error').textContent = err.message === 'Failed to fetch' ? "Dashboard connection lost. Run 'english-guard dashboard' to reopen it." : err.message;
+        $('connection-error').classList.remove('hidden');
+      } finally { busy = false; }
+    }
+    poll(); setInterval(poll,1000);
+  })();
+  </script>
+</body>
+</html>

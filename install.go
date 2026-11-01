@@ -7,11 +7,14 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
 )
+
+const tutorMCPName = "english-guard"
 
 func codexHome() (string, error) {
 	if home := os.Getenv("CODEX_HOME"); home != "" {
@@ -164,6 +167,13 @@ func filterPromptGroups(raw json.RawMessage, home string, replaceLegacy bool) ([
 			}
 			var command string
 			_ = json.Unmarshal(handler["command"], &command)
+			var handlerType, server, tool string
+			_ = json.Unmarshal(handler["type"], &handlerType)
+			_ = json.Unmarshal(handler["server"], &server)
+			_ = json.Unmarshal(handler["tool"], &tool)
+			if handlerType == "mcp_tool" && server == tutorMCPName && tool == "check_prompt" {
+				continue
+			}
 			if belongsToGuard(command, home) || replaceLegacy && isLegacyGuard(command, home) {
 				continue
 			}
@@ -176,6 +186,71 @@ func filterPromptGroups(raw json.RawMessage, home string, replaceLegacy bool) ([
 		}
 	}
 	return kept, nil
+}
+
+func configuredTutorMCP(home string) (bool, error) {
+	codex, err := exec.LookPath("codex")
+	if err != nil {
+		return false, nil
+	}
+	command := exec.Command(codex, "mcp", "list", "--json")
+	command.Env = append(os.Environ(), "CODEX_HOME="+home)
+	output, err := command.CombinedOutput()
+	if err != nil {
+		return false, fmt.Errorf("list Codex MCP servers: %s: %w", strings.TrimSpace(string(output)), err)
+	}
+	var servers []struct {
+		Name      string `json:"name"`
+		Transport struct {
+			Command string `json:"command"`
+		} `json:"transport"`
+	}
+	if err := json.Unmarshal(output, &servers); err != nil {
+		return false, fmt.Errorf("read Codex MCP server list: %w", err)
+	}
+	for _, server := range servers {
+		if server.Name == tutorMCPName {
+			prefix := filepath.Join(home, "english-guard", "versions") + string(filepath.Separator)
+			if !strings.HasPrefix(filepath.Clean(server.Transport.Command), prefix) {
+				return false, fmt.Errorf("Codex MCP server %q already belongs to another command", tutorMCPName)
+			}
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func registerTutorMCP(home, path string) (bool, error) {
+	if _, err := exec.LookPath("codex"); err != nil {
+		return false, nil // The standalone letter guard does not require the Codex CLI.
+	}
+	_, err := configuredTutorMCP(home)
+	if err != nil {
+		return false, err
+	}
+	codex, _ := exec.LookPath("codex")
+	command := exec.Command(codex, "mcp", "add", tutorMCPName, "--env", "CODEX_HOME="+home, "--", path, "mcp")
+	command.Env = append(os.Environ(), "CODEX_HOME="+home)
+	output, err := command.CombinedOutput()
+	if err != nil {
+		return false, fmt.Errorf("register Tutor MCP server: %s: %w", strings.TrimSpace(string(output)), err)
+	}
+	return true, nil
+}
+
+func removeTutorMCP(home string) error {
+	owned, err := configuredTutorMCP(home)
+	if err != nil || !owned {
+		return err
+	}
+	codex, _ := exec.LookPath("codex")
+	command := exec.Command(codex, "mcp", "remove", tutorMCPName)
+	command.Env = append(os.Environ(), "CODEX_HOME="+home)
+	output, err := command.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("remove Tutor MCP server: %s: %w", strings.TrimSpace(string(output)), err)
+	}
+	return nil
 }
 
 func belongsToGuard(command, home string) bool {
@@ -242,24 +317,59 @@ func installGuard(replaceLegacy bool) error {
 	if err != nil {
 		return err
 	}
+	if err := stopTutorDashboard(home); err != nil {
+		return fmt.Errorf("stop previous timing dashboard: %w", err)
+	}
 	path := installedPath(home)
 	if err := copyExecutable(path); err != nil {
 		return fmt.Errorf("copy executable: %w", err)
 	}
+	mcpAvailable, err := registerTutorMCP(home, path)
+	if err != nil {
+		return err
+	}
 	handler := map[string]any{
 		"type": "command", "command": quoteCommand(path),
-		"timeout": 5, "statusMessage": "Checking prompt letters",
+		"timeout": 35, "statusMessage": "Checking prompt",
 	}
 	if runtime.GOOS == "windows" {
 		handler["commandWindows"] = quoteCommand(path)
 	}
 	group, _ := json.Marshal(map[string]any{"hooks": []any{handler}})
 	groups = append(groups, group)
+	if mcpAvailable {
+		mcpHandler := map[string]any{
+			"type": "mcp_tool", "server": tutorMCPName, "tool": "check_prompt",
+			"input":   map[string]string{"session_id": "${session_id}", "prompt": "${prompt}"},
+			"timeout": 660, "statusMessage": "Tutor: checking English at Low effort",
+		}
+		mcpGroup, _ := json.Marshal(map[string]any{"hooks": []any{mcpHandler}})
+		groups = append(groups, mcpGroup)
+	}
 	hooks["UserPromptSubmit"], _ = json.Marshal(groups)
+	// Remove review gates from the previous active-model design. Grammar now
+	// runs in an independent Tutor chat before the main model receives the turn.
+	for _, event := range []string{"PreToolUse", "Stop"} {
+		gateGroups, err := filterPromptGroups(hooks[event], home, false)
+		if err != nil {
+			return fmt.Errorf("read %s hooks: %w", event, err)
+		}
+		if len(gateGroups) == 0 {
+			delete(hooks, event)
+		} else {
+			hooks[event], _ = json.Marshal(gateGroups)
+		}
+	}
 	if err := saveHookConfig(config, root, hooks); err != nil {
 		return err
 	}
 	fmt.Println("Installed English Guard for new local Codex chats:", config)
+	fmt.Println("Installed command:", path)
+	if mcpAvailable {
+		fmt.Println("Registered in-chat Tutor choices through Codex MCP.")
+	} else {
+		fmt.Println("Codex CLI was not found; Tutor choices are unavailable until it is installed and English Guard is reinstalled.")
+	}
 	fmt.Println("Review and trust the hook when Codex asks.")
 	return nil
 }
@@ -274,19 +384,38 @@ func uninstallGuard() error {
 	if err != nil {
 		return err
 	}
-	groups, err := filterPromptGroups(hooks["UserPromptSubmit"], home, false)
-	if err != nil {
-		return err
-	}
-	if len(groups) == 0 {
-		delete(hooks, "UserPromptSubmit")
-	} else {
-		hooks["UserPromptSubmit"], _ = json.Marshal(groups)
+	for _, event := range []string{"UserPromptSubmit", "PreToolUse", "Stop"} {
+		groups, err := filterPromptGroups(hooks[event], home, false)
+		if err != nil {
+			return fmt.Errorf("read %s hooks: %w", event, err)
+		}
+		if len(groups) == 0 {
+			delete(hooks, event)
+		} else {
+			hooks[event], _ = json.Marshal(groups)
+		}
 	}
 	if err := saveHookConfig(config, root, hooks); err != nil {
 		return err
 	}
+	if err := removeTutorMCP(home); err != nil {
+		return err
+	}
+	if err := stopTutorDashboard(home); err != nil {
+		return fmt.Errorf("stop Tutor dashboard: %w", err)
+	}
 	fmt.Println("Removed English Guard hook from:", config)
 	fmt.Println("Installed binaries are retained so active chats can finish; remove the english-guard directory later if desired.")
+	for _, path := range []string{tutorSettingsPath(home)} {
+		if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
+			return fmt.Errorf("remove Tutor data: %w", err)
+		}
+	}
+	if err := os.RemoveAll(tutorSessionsDir(home)); err != nil {
+		return fmt.Errorf("remove Tutor sessions: %w", err)
+	}
+	if err := os.RemoveAll(tutorMetricsDir(home)); err != nil {
+		return fmt.Errorf("remove Tutor timings: %w", err)
+	}
 	return nil
 }

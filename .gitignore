@@ -1,4 +1,6 @@
 english-guard
 english-guard.exe
 dist/
+benchmark-results/
+__pycache__/
 .DS_Store

@@ -15,8 +15,16 @@ func TestInstallPreservesOtherHooksAndUninstalls(t *testing.T) {
 	version = "v0.1.0"
 	t.Cleanup(func() { version = previousVersion })
 	config := filepath.Join(home, "hooks.json")
-	initial := `{"description":"keep me","hooks":{"Stop":[{"hooks":[{"type":"command","command":"echo safe"}]}],"UserPromptSubmit":[{"hooks":[{"type":"command","command":"echo other"}]}]}}`
-	if err := os.WriteFile(config, []byte(initial), 0600); err != nil {
+	oldGate := map[string]any{"hooks": []any{map[string]any{"type": "command", "command": quoteCommand(installedPath(home)) + " tutor-gate"}}}
+	initial, err := json.Marshal(map[string]any{"description": "keep me", "hooks": map[string]any{
+		"Stop":             []any{map[string]any{"hooks": []any{map[string]any{"type": "command", "command": "echo safe"}}}, oldGate},
+		"PreToolUse":       []any{oldGate},
+		"UserPromptSubmit": []any{map[string]any{"hooks": []any{map[string]any{"type": "command", "command": "echo other"}}}},
+	}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(config, initial, 0600); err != nil {
 		t.Fatal(err)
 	}
 	for i := 0; i < 2; i++ {
@@ -37,20 +45,46 @@ func TestInstallPreservesOtherHooksAndUninstalls(t *testing.T) {
 	if err := json.Unmarshal(hooks["UserPromptSubmit"], &groups); err != nil {
 		t.Fatal(err)
 	}
-	if len(groups) != 2 {
-		t.Fatalf("expected other hook plus one guard hook, got %d groups", len(groups))
+	mcpRegistered, err := configuredTutorMCP(home)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expectedGroups := 2
+	if mcpRegistered {
+		expectedGroups++
+	}
+	if len(groups) != expectedGroups {
+		t.Fatalf("expected %d hook groups, got %d", expectedGroups, len(groups))
+	}
+	if len(hooks["PreToolUse"]) != 0 || strings.Contains(string(hooks["Stop"]), "tutor-gate") {
+		t.Fatal("installer left obsolete active-model review gates")
 	}
 	if _, err := os.Stat(installedPath(home)); err != nil {
 		t.Fatal("installed binary missing:", err)
 	}
+	if err := enableTutorSession(home, "test-session"); err != nil {
+		t.Fatal(err)
+	}
+	if startTutorTrace(10) == nil {
+		t.Fatal("could not create test timing record")
+	}
 	if err := uninstallGuard(); err != nil {
 		t.Fatal(err)
+	}
+	mcpRegistered, err = configuredTutorMCP(home)
+	if err != nil || mcpRegistered {
+		t.Fatalf("uninstall left Tutor MCP server: %t %v", mcpRegistered, err)
+	}
+	for _, path := range []string{tutorSettingsPath(home), tutorSessionsDir(home), tutorMetricsDir(home), dashboardStatePath(home)} {
+		if _, err := os.Stat(path); !os.IsNotExist(err) {
+			t.Fatalf("uninstall kept Tutor data %s: %v", path, err)
+		}
 	}
 	_, hooks, err = loadHookConfig(config)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if strings.Contains(string(hooks["UserPromptSubmit"]), "english-guard") || len(hooks["Stop"]) == 0 {
+	if strings.Contains(string(hooks["UserPromptSubmit"]), "english-guard") || strings.Contains(string(hooks["Stop"]), "english-guard") || len(hooks["PreToolUse"]) != 0 || len(hooks["Stop"]) == 0 {
 		t.Fatal("uninstall removed unrelated hook or left guard hook")
 	}
 	backups, _ := filepath.Glob(config + ".english-guard.*.bak")

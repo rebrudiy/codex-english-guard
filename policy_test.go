@@ -38,6 +38,7 @@ func TestPolicy(t *testing.T) {
 }
 
 func TestHookInputOutput(t *testing.T) {
+	t.Setenv("CODEX_HOME", t.TempDir())
 	for _, test := range []struct {
 		input   string
 		blocked bool
