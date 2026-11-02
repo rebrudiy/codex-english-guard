@@ -25,7 +25,10 @@ func TestMCPDedicatedTutorChoice(t *testing.T) {
 			}
 			trace := startTutorTrace(len(prompt))
 			trace.workerFinished(len("I have a bug."), true, nil)
-			return tutorResult{CorrectedPrompt: "I have a bug.", trace: trace}, nil
+			return tutorResult{
+				GrammarErrors:   []tutorIssue{{Original: "I has", Correction: "I have", Explanation: "Use have with I."}},
+				CorrectedPrompt: "I have a bug.", Meaning: "You are reporting a bug.", trace: trace,
+			}, nil
 		},
 		pending: make(map[int64]chan mcpMessage),
 	}
@@ -71,6 +74,17 @@ func TestMCPDedicatedTutorChoice(t *testing.T) {
 	if string(request["method"]) != `"elicitation/create"` || !strings.Contains(string(request["params"]), "I have a bug.") {
 		t.Fatalf("missing full correction in native choice: %v", request)
 	}
+	var choiceParams struct {
+		Message string `json:"message"`
+	}
+	if err := json.Unmarshal(request["params"], &choiceParams); err != nil {
+		t.Fatal(err)
+	}
+	for _, text := range []string{"1. Spelling errors\nNone found.", "2. Grammar errors", "Use have with I.", "3. Word choice\nNone found.", "4. Corrected version\nI have a bug.", "Meaning\nYou are reporting a bug."} {
+		if !strings.Contains(choiceParams.Message, text) {
+			t.Fatalf("native choice omitted %q: %s", text, choiceParams.Message)
+		}
+	}
 	write(map[string]any{"jsonrpc": "2.0", "id": request["id"], "result": map[string]any{
 		"action": "accept", "content": map[string]string{"choice": "Use correction"},
 	}})
@@ -85,6 +99,9 @@ func TestMCPDedicatedTutorChoice(t *testing.T) {
 	}
 	if !strings.Contains(toolResult.Content[0].Text, `I have a bug.`) || !strings.Contains(toolResult.Content[0].Text, `selected_prompt_json`) {
 		t.Fatalf("missing selected correction: %s", toolResult.Content[0].Text)
+	}
+	if strings.Contains(toolResult.Content[0].Text, "Use have with I.") || strings.Contains(toolResult.Content[0].Text, "You are reporting a bug.") {
+		t.Fatalf("teaching feedback was sent as part of the selected prompt: %s", toolResult.Content[0].Text)
 	}
 	runs, err := readTutorTraces(home)
 	if err != nil || len(runs) != 1 || runs[0].Status != "completed" {

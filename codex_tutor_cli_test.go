@@ -43,7 +43,7 @@ func main() {
     }
     data, err := os.ReadFile(schema)
     if err != nil || !json.Valid(data) { os.Exit(3) }
-    if err := os.WriteFile(output, []byte("{\"corrected_prompt\":\"I have a bug.\"}"), 0600); err != nil { panic(err) }
+    if err := os.WriteFile(output, []byte(os.Getenv("ENGLISH_GUARD_TEST_RESULT")), 0600); err != nil { panic(err) }
 }
 `
 	if err := os.WriteFile(source, []byte(program), 0600); err != nil {
@@ -65,12 +65,17 @@ func main() {
 	t.Setenv("PATH", temporary+string(os.PathListSeparator)+os.Getenv("PATH"))
 	t.Setenv("ENGLISH_GUARD_TEST_ARGS", argsPath)
 	t.Setenv("ENGLISH_GUARD_TEST_INSTRUCTIONS", instructionsPath)
+	const validResult = `{"spelling_errors":[],"grammar_errors":[{"original":"I has","correction":"I have","explanation":"Use have with I."}],"word_choice":[],"corrected_prompt":"I have a bug.","meaning":"You are reporting a bug."}`
+	t.Setenv("ENGLISH_GUARD_TEST_RESULT", validResult)
 	result, err := codexTutor("I has a bug.")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if result.CorrectedPrompt != "I have a bug." {
 		t.Fatalf("GPT result changed: %q", result.CorrectedPrompt)
+	}
+	if len(result.GrammarErrors) != 1 || result.GrammarErrors[0].Explanation != "Use have with I." || result.Meaning != "You are reporting a bug." {
+		t.Fatalf("GPT explanations were not preserved: %+v", result)
 	}
 	data, err := os.ReadFile(argsPath)
 	if err != nil {
@@ -124,12 +129,38 @@ func main() {
 	if err != nil {
 		t.Fatal("grammar-only base instructions were not supplied:", err)
 	}
-	for _, phrase := range []string{"spelling and grammar", "Return the full corrected prompt"} {
+	for _, phrase := range []string{"spelling and grammar", "word choice", "simple English", "Return the full corrected prompt", "meaning", "never invent mistakes", "Preserve names, code, commands, paths, and technical terms"} {
 		if !strings.Contains(string(instructions), phrase) {
 			t.Errorf("worker instruction omitted %q", phrase)
 		}
 	}
 	if strings.Contains(string(instructions), "BYTE") || strings.Contains(tutorSchema, "edits") {
 		t.Fatal("GPT was asked to calculate edit offsets instead of returning the full prompt")
+	}
+	for _, field := range []string{"spelling_errors", "grammar_errors", "word_choice", "corrected_prompt", "meaning"} {
+		for _, variant := range []string{"missing", "null", "wrong type"} {
+			t.Run(field+"/"+variant, func(t *testing.T) {
+				var response map[string]any
+				if err := json.Unmarshal([]byte(validResult), &response); err != nil {
+					t.Fatal(err)
+				}
+				switch variant {
+				case "missing":
+					delete(response, field)
+				case "null":
+					response[field] = nil
+				case "wrong type":
+					response[field] = 42
+				}
+				data, err := json.Marshal(response)
+				if err != nil {
+					t.Fatal(err)
+				}
+				t.Setenv("ENGLISH_GUARD_TEST_RESULT", string(data))
+				if _, err := codexTutor("I has a bug."); err == nil {
+					t.Fatalf("invalid %s field accepted (%s)", field, variant)
+				}
+			})
+		}
 	}
 }

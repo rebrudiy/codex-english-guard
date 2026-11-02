@@ -11,7 +11,11 @@ import (
 
 func TestTutorFullPromptAndHook(t *testing.T) {
 	prompt := "I has a bug."
-	result := tutorResult{CorrectedPrompt: "I have a bug."}
+	result := tutorResult{
+		GrammarErrors:   []tutorIssue{{Original: "I has", Correction: "I have", Explanation: "Use have with I."}},
+		CorrectedPrompt: "I have a bug.",
+		Meaning:         "You are reporting a bug.",
+	}
 	reason, err := tutorReason(prompt, result)
 	if err != nil || !strings.Contains(reason, "I have a bug.") {
 		t.Fatalf("reason: %q, %v", reason, err)
@@ -40,6 +44,63 @@ func TestTutorFullPromptAndHook(t *testing.T) {
 	}
 	if called {
 		t.Fatal("Tutor ran before the character guard")
+	}
+}
+
+func TestTutorReportExplainsErrorsInOrder(t *testing.T) {
+	result := tutorResult{
+		SpellingErrors:  []tutorIssue{{Original: "surnanes", Correction: "surnames", Explanation: "Surnames is the correct spelling."}},
+		GrammarErrors:   []tutorIssue{{Original: "Can you lists", Correction: "Can you list", Explanation: "Use the base form list after can."}},
+		WordChoice:      []tutorIssue{{Original: "live in the image", Correction: "appear in the image", Explanation: "Appear describes being shown in an image."}},
+		CorrectedPrompt: "Can you list the surnames of people who appear in the image?",
+		Meaning:         "You want the surnames of the people shown in the image.",
+	}
+	reason, err := tutorReason("Can you lists the surnanes of people who live in the image?", result)
+	if err != nil {
+		t.Fatal(err)
+	}
+	previous := -1
+	for _, text := range []string{
+		"1. Spelling errors", `"surnanes" → "surnames"`, "Surnames is the correct spelling.",
+		"2. Grammar errors", "Use the base form list after can.",
+		"3. Word choice", "Appear describes being shown in an image.",
+		"4. Corrected version", result.CorrectedPrompt, "Meaning", result.Meaning,
+	} {
+		index := strings.Index(reason, text)
+		if index <= previous {
+			t.Fatalf("missing or misplaced %q in report:\n%s", text, reason)
+		}
+		previous = index
+	}
+}
+
+func TestTutorReportEmptyCategoriesAndDeletion(t *testing.T) {
+	result := tutorResult{
+		GrammarErrors:   []tutorIssue{{Original: "also", Correction: "", Explanation: "Also repeats the meaning of too here."}},
+		CorrectedPrompt: "Check this too.",
+		Meaning:         "You want this checked as well.",
+	}
+	reason, err := tutorReason("Check this also too.", result)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, text := range []string{"1. Spelling errors\nNone found.", "3. Word choice\nNone found.", `"also" → (remove)`} {
+		if !strings.Contains(reason, text) {
+			t.Fatalf("missing %q in report:\n%s", text, reason)
+		}
+	}
+}
+
+func TestTutorRejectsIncompleteExplanations(t *testing.T) {
+	for _, result := range []tutorResult{
+		{CorrectedPrompt: "I have a bug."},
+		{CorrectedPrompt: "I have a bug.", Meaning: "You are reporting a bug."},
+		{CorrectedPrompt: "I have a bug.", Meaning: "You are reporting a bug.", GrammarErrors: []tutorIssue{{Original: "I has", Correction: "I have"}}},
+		{CorrectedPrompt: "I have a bug.", Meaning: "You are reporting a bug.", GrammarErrors: []tutorIssue{{Correction: "I have", Explanation: "Use have with I."}}},
+	} {
+		if _, err := tutorReason("I has a bug.", result); err == nil {
+			t.Fatalf("incomplete explanation accepted: %+v", result)
+		}
 	}
 }
 

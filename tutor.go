@@ -14,8 +14,18 @@ import (
 	"unicode/utf8"
 )
 
+type tutorIssue struct {
+	Original    string `json:"original"`
+	Correction  string `json:"correction"`
+	Explanation string `json:"explanation"`
+}
+
 type tutorResult struct {
-	CorrectedPrompt string `json:"corrected_prompt"`
+	SpellingErrors  []tutorIssue `json:"spelling_errors"`
+	GrammarErrors   []tutorIssue `json:"grammar_errors"`
+	WordChoice      []tutorIssue `json:"word_choice"`
+	CorrectedPrompt string       `json:"corrected_prompt"`
+	Meaning         string       `json:"meaning"`
 	trace           *tutorTrace
 }
 
@@ -187,7 +197,36 @@ func tutorReason(prompt string, result tutorResult) (string, error) {
 	if corrected == prompt {
 		return "", nil
 	}
-	return "Suggested prompt:\n" + corrected + "\nChoose whether Codex should use this correction or your original prompt.", nil
+	if strings.TrimSpace(result.Meaning) == "" || len(result.SpellingErrors)+len(result.GrammarErrors)+len(result.WordChoice) == 0 {
+		return "", errors.New("Tutor returned a correction without an explanation")
+	}
+	var report strings.Builder
+	for _, category := range []struct {
+		title  string
+		issues []tutorIssue
+	}{
+		{"1. Spelling errors", result.SpellingErrors},
+		{"2. Grammar errors", result.GrammarErrors},
+		{"3. Word choice", result.WordChoice},
+	} {
+		report.WriteString(category.title + "\n")
+		if len(category.issues) == 0 {
+			report.WriteString("None found.\n")
+		}
+		for _, issue := range category.issues {
+			if strings.TrimSpace(issue.Original) == "" || strings.TrimSpace(issue.Explanation) == "" {
+				return "", errors.New("Tutor returned an incomplete error explanation")
+			}
+			replacement := fmt.Sprintf("%q", issue.Correction)
+			if issue.Correction == "" {
+				replacement = "(remove)"
+			}
+			fmt.Fprintf(&report, "- %q → %s: %s\n", issue.Original, replacement, issue.Explanation)
+		}
+		report.WriteString("\n")
+	}
+	fmt.Fprintf(&report, "4. Corrected version\n%s\n\nMeaning\n%s\n\nChoose whether Codex should use this correction or your original prompt.", corrected, result.Meaning)
+	return report.String(), nil
 }
 
 func checkTutor(sessionID, prompt string) (string, error) {

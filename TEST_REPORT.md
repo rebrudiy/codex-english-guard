@@ -1,4 +1,16 @@
-# English Guard v0.2.0 validation
+# English Guard validation
+
+## v0.3.0 tutor feedback — 2026-11-02
+
+- Go unit tests, race tests, `go vet`, and `git diff --check` pass locally on macOS with Codex CLI 0.166.0.
+- Tests cover feedback order, simple explanations, empty categories, removal suggestions, incomplete feedback, and missing, null, or incorrectly typed response fields.
+- MCP tests verify that the native choice contains the teaching report while the selected prompt forwarded to the main model contains only the corrected text.
+- A live check of `Can you lists the surnanes of people who live in the image?` returned spelling, grammar, and word choice explanations followed by a complete correction and a meaning summary.
+- The tested local development binary was installed and its SHA-256 hash matches the built executable. Tutor remains off in new chats until `Tutor on` is sent.
+- The worker remains a fresh temporary session fixed at Low effort. Its model is not pinned; it uses the Codex CLI default while ignoring personal user configuration.
+- The CLI live check verifies generated report text. Native desktop and IDE choice rendering still needs direct verification.
+
+## v0.2.0 validation
 
 Local validation on 2026-11-01 used macOS and Codex CLI 0.166.0. Tutor is experimental. Native desktop and IDE correction choices remain unverified.
 

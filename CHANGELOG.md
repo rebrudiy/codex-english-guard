@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.0
+
+- Show Tutor feedback in order: spelling errors, grammar errors with simple explanations, word choice, the full corrected version, and a short meaning summary.
+- Show empty categories explicitly and keep teaching feedback out of the prompt sent to the main chat.
+- Keep the independent worker at Low effort in a fresh temporary session for each check. The GPT model remains the Codex CLI default; no model is pinned.
+
 ## v0.2.0
 
 - Add experimental GPT Tutor with a separate Low-effort grammar session and complete corrected prompts.

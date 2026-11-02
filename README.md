@@ -2,7 +2,7 @@
 
 A small local Codex hook that stops a prompt before the model sees it when the text contains letters outside the English alphabet. It allows numbers, punctuation, emoji, and math operators. For math use, it also allows Greek letters, mathematical alphanumeric letters, and letterlike symbols such as `α`, `𝑥`, and `ℝ`.
 
-Optional, experimental **Tutor mode** checks English spelling and grammar in its own temporary Codex session, fixed at **Low** reasoning effort. It receives the submitted prompt without the coding chat's history. Your main chat keeps its model and effort setting. Tutor is off by default and uses the customer's existing Codex allowance. The character guard continues to work without Tutor.
+Optional, experimental **Tutor mode** checks English spelling, grammar, and word choice in its own temporary Codex session, fixed at **Low** reasoning effort. It explains suggestions in simple English, then shows a complete corrected prompt and a short meaning summary. It receives the submitted prompt without the coding chat's history. Your main chat keeps its model and effort setting. Tutor is off by default and uses the customer's existing Codex allowance. The character guard continues to work without Tutor.
 
 The check runs when you press **Send** in a local Codex chat. It does not intercept network traffic or change your text. It shows the first rejected character and asks you to rewrite the prompt. With Tutor off, the executable makes no network requests.
 
@@ -94,13 +94,36 @@ From an extracted release archive or the installed executable, you can also run:
 
 The CLI `tutor off` command disables Tutor in every chat and removes the old global setting. The CLI `tutor on` command only prints the in-chat activation instruction. Uninstall removes Tutor session data. Installing a newer version retains active chat sessions.
 
-On each Send, the independent command hook enforces the letter rule. A separate MCP prompt hook checks whether Tutor is enabled for that chat. If enabled, it launches a clean, ephemeral GPT session fixed at Low effort with only a short correction instruction and the current prompt. User model settings and coding history are not loaded into that session. File tools and web search are disabled. GPT returns the complete corrected prompt directly; Tutor has no local grammar rules, edit-offset calculations, or technical-text filters. It opens a native **Use correction / Keep original** choice with that complete suggestion. Choosing either continues the main chat without another grammar check. If GPT returns the original prompt unchanged, it proceeds without a choice.
+On each Send, the independent command hook enforces the letter rule. A separate MCP prompt hook checks whether Tutor is enabled for that chat. If enabled, it launches a clean, ephemeral GPT session fixed at Low effort with only a short correction instruction and the current prompt. User model settings and coding history are not loaded into that session. File tools and web search are disabled. GPT returns categorized explanations, the complete corrected prompt, and a short summary of the intended meaning. Tutor has no local grammar rules, edit-offset calculations, or technical-text filters. It opens a native **Use correction / Keep original** choice with the feedback in this order:
+
+1. **Spelling errors** — the original word, its correction, and a short explanation.
+2. **Grammar errors** — the original phrase, its correction, and a plain-English explanation.
+3. **Word choice** — suggestions for words or phrases that do not fit the meaning or sound unnatural.
+4. **Corrected version** — the full prompt, with instructions to preserve your meaning, tone, names, and technical content.
+5. **Meaning** — a brief explanation of what you are trying to say, noting ambiguity when necessary.
+
+Empty categories show “None found.” Choosing either option continues the main chat without another grammar check. Only the corrected prompt is forwarded when you choose **Use correction**; the teaching feedback stays in the choice. If GPT returns the original prompt unchanged, it proceeds without a choice.
 
 For example, in the same Codex chat:
 
 ```text
 You: I has a bug.
-Tutor choice: Suggested prompt: I have a bug.
+Tutor choice:
+1. Spelling errors
+None found.
+
+2. Grammar errors
+- "I has" → "I have": Use have with I.
+
+3. Word choice
+None found.
+
+4. Corrected version
+I have a bug.
+
+Meaning
+You are reporting a bug.
+
 You select: Use correction
 Codex: [responds using the selected correction]
 ```
@@ -108,6 +131,8 @@ Codex: [responds using the selected correction]
 When you choose **Use correction**, the selected prompt reaches the main model as JSON-encoded user text in hook context; the original message remains visible in the chat. A native choice is supported through MCP elicitation in the tested Codex CLI; rendering in every desktop and IDE version has not been verified. Canceling a running choice blocks the prompt. If the MCP server or tool cannot run, Codex can skip that optional Tutor check; the independent letter guard remains active. Tutor supports prompts up to 20,000 bytes. The choice expires after ten minutes.
 
 Tutor's effort is always Low, independently of whether the main chat uses Low, High, Xhigh, or another supported effort. It makes its own model request, so correction is not instantaneous and depends on service latency. Tutor does not change your main chat or global model settings.
+
+Tutor does not pin a GPT model. The worker ignores personal Codex configuration and uses the CLI's default model, which can change with Codex defaults. Every check starts a new temporary background session with only the current prompt and tutor instructions; it does not reuse your conversation history or create a saved chat.
 
 Tutor can miss errors or suggest an imperfect correction. It cannot guarantee that a suggested edit preserves meaning. Review the complete suggested text before choosing. It makes no paid API-key request from the project owner.
 
